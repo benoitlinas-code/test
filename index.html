@@ -10,26 +10,18 @@
         const context = cast.framework.CastReceiverContext.getInstance();
         const playerManager = context.getPlayerManager();
 
-        // On simplifie : on se contente d'intercepter pour valider le flux
         playerManager.setMessageInterceptor(
             cast.framework.messages.MessageType.LOAD,
             loadRequestData => {
-                console.log("Flux à charger :", loadRequestData.media.contentId);
-                
-                // On force le type en video/mp4 pour que le Nest utilise son décodeur universel
                 if (loadRequestData.media) {
                     loadRequestData.media.contentType = 'video/mp4';
                 }
-                
                 return loadRequestData;
             }
         );
 
-        // Options de base sans fioritures pour éviter les erreurs de "null"
-        const options = new cast.framework.CastReceiverOptions();
-        options.disableIdleTimeout = true;
-
-        context.start(options);
+        context.start();
     </script>
 </body>
 </html>
+
