@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://www.gstatic.com/cast/sdk/libs/caf_receiver/v3/cast_receiver_framework.css">
+</head>
+<body>
+    <cast-media-player></cast-media-player>
+    <script type="text/javascript" src="https://www.gstatic.com/cast/sdk/libs/caf_receiver/v3/cast_receiver_framework.js"></script>
+    <script>
+        const context = cast.framework.CastReceiverContext.getInstance();
+        const playerManager = context.getPlayerManager();
+
+        // LA FEINTE EST ICI : On autorise le contenu non sécurisé (HTTP)
+        const options = new cast.framework.CastReceiverOptions();
+        options.disableIdleTimeout = true; // Pour ne pas que ça coupe
+        
+        // On intercepte la requête pour forcer la lecture
+        playerManager.setMessageInterceptor(
+            cast.framework.messages.MessageType.LOAD,
+            loadRequestData => {
+                console.log("Flux reçu :", loadRequestData.media.contentId);
+                return loadRequestData;
+            }
+        );
+
+        context.start(options);
+    </script>
+</body>
+</html>
