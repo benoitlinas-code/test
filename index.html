@@ -10,18 +10,27 @@
         const context = cast.framework.CastReceiverContext.getInstance();
         const playerManager = context.getPlayerManager();
 
+        // Config pour forcer le passage sur les flux HTTP/MKV difficiles
+        const playbackConfig = new cast.framework.PlaybackConfig();
+        playbackConfig.manifestRequestHandler = requestInfo => {
+            requestInfo.withCredentials = true;
+        };
+        
+        // On intercepte pour forcer le type et nettoyer l'URL
         playerManager.setMessageInterceptor(
             cast.framework.messages.MessageType.LOAD,
             loadRequestData => {
                 if (loadRequestData.media) {
+                    // On force le HTTPS si possible (certains serveurs acceptent les deux)
+                    // loadRequestData.media.contentId = loadRequestData.media.contentId.replace('http://', 'https://');
+                    
                     loadRequestData.media.contentType = 'video/mp4';
                 }
                 return loadRequestData;
             }
         );
 
-        context.start();
+        context.start({ playbackConfig: playbackConfig });
     </script>
 </body>
 </html>
-
